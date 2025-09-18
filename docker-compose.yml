@@ -1,0 +1,55 @@
+version: "3.9"
+services:
+    db:
+      image: postgres:15
+      restart: always
+      environment:
+        POSTGRES_USER: ${POSTGRES_USER:-postgres}
+        POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-postgres}
+        POSTGRES_DB: ${POSTGRES_DB:-fastapi_db}
+      ports:
+        - "5432:5432"
+      volumes:
+        - postgres_data:/var/lib/postgresql/data
+      healthcheck:
+        test: ["CMD-SHELL", "pg_isready -U postgres"]
+        interval: 10s
+        timeout: 5s
+        retries: 5
+
+    web:
+      build: .
+      command: >
+        bash -c "alembic upgrade head && 
+        uvicorn app.main:app --host 0.0.0.0 --port 8000 --reload"
+      volumes:
+        - .:/code
+      ports:
+        - "8000:8000"
+      environment:
+        - POSTGRES_USER=${POSTGRES_USER:-postgres}
+        - POSTGRES_PASSWORD=${POSTGRES_PASSWORD:-postgres}
+        - POSTGRES_HOST=db
+        - POSTGRES_PORT=5432
+        - POSTGRES_DB=${POSTGRES_DB:-fastapi_db}
+        - GOOGLE_CLIENT_ID=${GOOGLE_CLIENT_ID}
+        - GOOGLE_CLIENT_SECRET=${GOOGLE_CLIENT_SECRET}
+        - JWT_SECRET=${JWT_SECRET}
+        - SESSION_SECRET=${SESSION_SECRET}
+      env_file:
+        - .env
+      depends_on:
+        db:
+          condition: service_healthy
+      healthcheck:
+        test: ["CMD", "curl", "-f", "http://localhost:8000/"]
+        interval: 30s
+        timeout: 10s
+        retries: 3
+
+volumes:
+  postgres_data:
+
+networks:
+  default:
+    driver: bridge

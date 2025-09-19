@@ -4,7 +4,8 @@ FROM python:3.11.5-alpine3.18 AS builder
 # Set environment variables
 ENV PYTHONDONTWRITEBYTECODE=1 \
     PYTHONUNBUFFERED=1 \
-    PIP_NO_CACHE_DIR=1
+    PIP_NO_CACHE_DIR=1 \
+    PIP_DISABLE_PIP_VERSION_CHECK=1
 
 WORKDIR /code
 
@@ -15,7 +16,9 @@ RUN apk add --no-cache \
     postgresql-dev \
     python3-dev \
     libffi-dev \
-    make
+    make \
+    bash \
+    && pip install --upgrade pip wheel setuptools
 
 # Create virtual environment
 RUN python -m venv /opt/venv
@@ -33,7 +36,8 @@ FROM python:3.11.5-alpine3.18
 ENV PYTHONDONTWRITEBYTECODE=1 \
     PYTHONUNBUFFERED=1 \
     PYTHONPATH=/code \
-    PATH="/opt/venv/bin:$PATH"
+    PATH="/opt/venv/bin:$PATH" \
+    TZ=UTC
 
 WORKDIR /code
 
@@ -41,21 +45,25 @@ WORKDIR /code
 RUN apk add --no-cache \
     postgresql-libs \
     curl \
+    bash \
     tzdata && \
     rm -rf /var/cache/apk/*
 
-# Create non-root user
-RUN addgroup -S app && adduser -S app -G app
-USER app
-
 # Copy virtual environment from builder
-COPY --chown=app:app --from=builder /opt/venv /opt/venv
+COPY --from=builder /opt/venv /opt/venv
 
 # Copy application code
-COPY --chown=app:app ./app ./app
-COPY --chown=app:app alembic.ini .
-COPY --chown=app:app migrations ./migrations
-COPY --chown=app:app .env .
+COPY ./app ./app
+COPY alembic.ini .
+COPY migrations ./migrations
+COPY .env .
+
+# Create non-root user and change ownership
+RUN addgroup -S app && adduser -S app -G app && \
+    chown -R app:app /code /opt/venv
+
+# Switch to non-root user
+USER app
 
 # Expose port
 EXPOSE 8000

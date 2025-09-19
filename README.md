@@ -13,7 +13,7 @@ A comprehensive **FastAPI-based backend** for a food ordering platform with **Go
 - [Environment Variables](#-environment-variables)  
 - [Running the Application](#-running-the-application)  
 - [API Documentation](#-api-documentation)  
-- [Database Schema](#database-schema)  
+- [Database Schema](#-database-schema)  
 - [Authentication Flow](#-authentication-flow)  
 - [API Endpoints](#-api-endpoints)  
 - [Docker Deployment](#-docker-deployment)  

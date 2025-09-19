@@ -379,18 +379,3 @@ docker-compose logs db
 docker-compose down -v
 docker-compose up --build
 ```
-
----
-
-## 🎥 Demo
-
-👉 [Demo Video Link Here](#) *(to be added after recording)*
-
----
-
-```
-
----
-
-Do you want me to also add **badges (Python, FastAPI, Docker, PostgreSQL)** at the top of README for extra polish?
-```

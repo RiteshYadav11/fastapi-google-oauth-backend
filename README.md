@@ -1,35 +1,26 @@
-Perfect 👍
-I’ll format everything properly into a **single markdown file** (`README.md`) with all styling, headings, tables, and code blocks — so you can directly copy-paste into your repo.
-
-Here it is:
-
----
-
-```markdown
 # 🚀 FastAPI Google OAuth Backend
 
 A comprehensive **FastAPI-based backend** for a food ordering platform with **Google OAuth authentication**, **database management**, and **analytical reporting** capabilities.  
 
----
-
 ## 📋 Table of Contents
 
-- [Project Overview](#-project-overview)  
-- [Features](#-features)  
-- [Tech Stack](#-tech-stack)  
-- [Project Structure](#-project-structure)  
-- [Prerequisites](#-prerequisites)  
-- [Installation & Setup](#-installation--setup)  
-- [Environment Variables](#-environment-variables)  
-- [Running the Application](#-running-the-application)  
-- [API Documentation](#-api-documentation)  
-- [Database Schema](#-database-schema)  
-- [Authentication Flow](#-authentication-flow)  
-- [API Endpoints](#-api-endpoints)  
-- [Docker Deployment](#-docker-deployment)  
-- [Demo](#-demo)  
+- [Project Overview](#project-overview)  
+- [Features](#features)  
+- [Tech Stack](#tech-stack)  
+- [Project Structure](#project-structure)  
+- [Prerequisites](#prerequisites)  
+- [Installation & Setup](#installation--setup)  
+- [Environment Variables](#environment-variables)  
+- [Running the Application](#running-the-application)  
+- [API Documentation](#api-documentation)  
+- [Database Schema](#database-schema)  
+- [Authentication Flow](#authentication-flow)  
+- [API Endpoints](#api-endpoints)  
+- [Docker Deployment](#docker-deployment)  
+- [Example API Calls](#example-api-calls)  
 
 ---
+
 
 ## 🎯 Project Overview
 
@@ -84,7 +75,10 @@ fastapi-google-oauth-backend/
 │       ├── orders.py        # Order management routes
 │       ├── payments.py      # Payment processing routes
 │       └── restaurants.py   # Restaurant and analytics routes
-├── migrations/              # Alembic migration files
+├── migrations/              # Alembic migrations 
+|       ├── versions/
+│       ├── env.py
+|       ├── script.py.mako     
 ├── requirements.txt         # Python dependencies
 ├── alembic.ini              # Alembic configuration
 ├── Dockerfile               # Docker container configuration
@@ -143,26 +137,20 @@ nano .env
 Example `.env` file:
 
 ```env
-# Database Configuration
+# Database configuration
 POSTGRES_USER=postgres
-POSTGRES_PASSWORD=your_secure_password
-POSTGRES_DB=fastapi_db
+POSTGRES_PASSWORD=your_password_here
 POSTGRES_HOST=localhost
 POSTGRES_PORT=5432
-DATABASE_URL=postgresql://postgres:your_secure_password@localhost:5432/fastapi_db
+POSTGRES_DB=fastapi_db
 
-# Google OAuth
-GOOGLE_CLIENT_ID=your_google_client_id.apps.googleusercontent.com
-GOOGLE_CLIENT_SECRET=your_google_client_secret
-GOOGLE_REDIRECT_URI=http://localhost:8000/auth/callback
+# Google OAuth2 configuration
+GOOGLE_CLIENT_ID=your_google_client_id_here
+GOOGLE_CLIENT_SECRET=your_google_client_secret_here
 
-# JWT Configuration
-JWT_SECRET=your_super_secret_jwt_key_here
-JWT_ALGORITHM=HS256
-JWT_EXPIRATION_HOURS=24
-
-# Session
-SESSION_SECRET=your_session_secret_key
+# Security
+JWT_SECRET=your_jwt_secret_here
+SESSION_SECRET=your_session_secret_here
 ```
 
 ---

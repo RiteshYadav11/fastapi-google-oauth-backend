@@ -173,14 +173,32 @@ pip install -r requirements.txt
 # Start PostgreSQL (if not running)
 createdb fastapi_db
 
+# Generate initial migration
+alembic revision --autogenerate -m "initial tables"
+
 # Run migrations
 alembic upgrade head
 ```
 
 #### 3. Start the Application
 
+Local Development
 ```bash
+# Run with auto-reload (default: host=127.0.0.1, port=8000)
+uvicorn app.main:app --reload
+```
+
+Access the app at: http://127.0.0.1:8000
+
+Production / Docker
+```bash
+# Run with host 0.0.0.0 so it's accessible from outside
 uvicorn app.main:app --host 0.0.0.0 --port 8000 --reload
+```
+
+Useful when running inside Docker or exposing the app to other devices on your network.
+
+Access via: http://<your-ip>:8000
 ```
 
 ---
@@ -201,20 +219,38 @@ docker-compose up -d --build
 docker-compose exec web alembic upgrade head
 ```
 
+#### 3. Run Database Migrations (Option B: Automatic)
+
+You can also configure migrations to run automatically every time the container starts.
+Comment out this line in `docker-compose.yml`:
+```bash
+command: uvicorn app.main:app --host 0.0.0.0 --port 8000
+```
+
+Uncomment and use this in your docker-compose.yml under the web service:
+```bash
+command: >
+  bash -c "alembic upgrade head &&
+           uvicorn app.main:app --host 0.0.0.0 --port 8000 --reload"
+```
+
+With this setup, Alembic migrations are applied before launching the FastAPI app.
+
+
 ---
 
 ## 🎉 Application Ready!
 
-* API Base URL → `http://localhost:8000`
-* Swagger Docs → `http://localhost:8000/docs`
-* ReDoc Docs → `http://localhost:8000/redoc`
+* API Base URL → `http://127.0.0.1:8000`
+* Swagger Docs → `http://127.0.0.1:8000/docs`
+* ReDoc Docs → `http://127.0.0.1:8000/redoc`
 
 ---
 
 ## 📖 API Documentation
 
-* Swagger UI → [http://localhost:8000/docs](http://localhost:8000/docs)
-* ReDoc → [http://localhost:8000/redoc](http://localhost:8000/redoc)
+* Swagger UI → [http://127.0.0.1:8000/docs](http://127.0.0.1:8000/docs)
+* ReDoc → [http://127.0.0.1:8000/redoc](http://127.0.0.1:8000/redoc)
 
 ---
 
@@ -278,13 +314,17 @@ docker-compose exec web alembic upgrade head
 
 * `GET /auth/login` – Initiate Google OAuth login
 * `GET /auth/callback` – Handle OAuth callback
-* `GET /auth/me` – Get current user profile
+* `GET /auth/verify-token` – Verify JWT token
+
+### 🔹 Restaurants
+
+* `POST /restaurants/` – Create new restaurant  
+* `GET /restaurants/{restaurant_id}` – Get restaurant details  
 
 ### 🔹 Orders
 
 * `POST /orders/` – Create new order (requires payment validation)
-* `GET /orders/` – Get user’s orders
-* `GET /orders/{order_id}` – Get order details
+* `GET /orders/debug/test_order_type` - Debug Order Type
 
 ### 🔹 Payments
 
@@ -293,11 +333,11 @@ docker-compose exec web alembic upgrade head
 
 ### 🔹 Analytics & Reports
 
-* `GET /restaurants/mumbai-earnings` – Total earnings in Mumbai (last month)
-* `GET /restaurants/bangalore-veg-earnings` – Veg item earnings in Bangalore
-* `GET /restaurants/top-customers` – Top 3 customers by orders
-* `GET /restaurants/daily-revenue` – Daily revenue for past 7 days
-* `GET /restaurants/{restaurant_id}/summary` – Order summary for restaurant
+* `GET /orders/reports/mumbai/last_month` – Total earnings in Mumbai (last month)  
+* `GET /orders/reports/bangalore/veg_earnings` – Veg item earnings in Bangalore  
+* `GET /orders/reports/top_customers` – Top 3 customers by orders  
+* `GET /orders/reports/daily_revenue_7days` – Daily revenue for past 7 days  
+* `GET /orders/reports/restaurant/{restaurant_id}/summary` – Order summary for a restaurant  
 
 ---
 
@@ -306,13 +346,13 @@ docker-compose exec web alembic upgrade head
 ### 1. Login with Google
 
 ```bash
-curl -X GET "http://localhost:8000/auth/login"
+curl -X GET "http://127.0.0.1:8000/auth/login"
 ```
 
 ### 2. Create Order
 
 ```bash
-curl -X POST "http://localhost:8000/orders/" \
+curl -X POST "http://127.0.0.1:8000/orders/" \
   -H "Authorization: Bearer YOUR_JWT_TOKEN" \
   -H "Content-Type: application/json" \
   -d '{
@@ -325,7 +365,7 @@ curl -X POST "http://localhost:8000/orders/" \
 ### 3. Get Mumbai Earnings
 
 ```bash
-curl -X GET "http://localhost:8000/restaurants/mumbai-earnings" \
+curl -X GET "http://127.0.0.1:8000/orders/reports/mumbai/last_month" \
   -H "Authorization: Bearer YOUR_JWT_TOKEN"
 ```
 
@@ -333,18 +373,26 @@ curl -X GET "http://localhost:8000/restaurants/mumbai-earnings" \
 
 ## 🐳 Docker Deployment
 
-### 🔹 Development
+### 🔹 Development (using Docker Compose)
 
 ```bash
+# Build and start all services (web + db)
 docker-compose up --build
+
+# Follow logs for the FastAPI web container
 docker-compose logs -f web
+
+# Stop and remove containers, networks, volumes
 docker-compose down
 ```
 
 ### 🔹 Production
 
 ```bash
+# Build image
 docker build -t fastapi-backend .
+
+# Run container with environment variables from .env
 docker run -d --name fastapi-app \
   -p 8000:8000 \
   --env-file .env \

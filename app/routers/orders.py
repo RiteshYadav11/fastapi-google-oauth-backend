@@ -74,10 +74,10 @@ def debug_order_type(db: Session = Depends(get_db)):
 
 # ------------------- Helper: price mapping -------------------
 price_map = {
-    models.FoodItemEnum.veg_manchurian: 150,
-    models.FoodItemEnum.chicken_manchurian: 200,
-    models.FoodItemEnum.veg_fried_rice: 120,
-    models.FoodItemEnum.chicken_noodles: 180,
+    'veg_manchurian': 150,
+    'chicken_manchurian': 200,
+    'veg_fried_rice': 120,
+    'chicken_noodles': 180,
 }
 
 # ------------------- Report 1: Total earnings in Mumbai last month -------------------
@@ -88,7 +88,9 @@ def earnings_mumbai_last_month(db: Session = Depends(get_db)):
     last_month_end = first_day_this_month - timedelta(days=1)
     last_month_start = last_month_end.replace(day=1)
 
-    case_stmt = case(price_map, value=models.Order.food_item, else_=0)
+    # Create the case statement using the enum values
+    whens = {models.Order.food_item == value: price for value, price in price_map.items()}
+    case_stmt = case(*[(condition, value) for condition, value in whens.items()], else_=0)
 
     total = (
         db.query(func.sum(case_stmt))
@@ -107,11 +109,13 @@ def earnings_mumbai_last_month(db: Session = Depends(get_db)):
 @router.get('/reports/bangalore/veg_earnings')
 def veg_earnings_bangalore(db: Session = Depends(get_db)):
     veg_map = {
-        models.FoodItemEnum.veg_manchurian: 150,
-        models.FoodItemEnum.veg_fried_rice: 120,
+        'veg_manchurian': 150,
+        'veg_fried_rice': 120,
     }
 
-    case_stmt = case(veg_map, value=models.Order.food_item, else_=0)
+    # Create the case statement using the enum values
+    whens = {models.Order.food_item == value: price for value, price in veg_map.items()}
+    case_stmt = case(*[(condition, value) for condition, value in whens.items()], else_=0)
 
     total = (
         db.query(func.sum(case_stmt))

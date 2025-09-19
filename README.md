@@ -253,7 +253,7 @@ With this setup, Alembic migrations are applied before launching the FastAPI app
 * ReDoc → [http://127.0.0.1:8000/redoc](http://127.0.0.1:8000/redoc)
 
 ---
-
+<a name="-database-schema"></a>
 ## 🗄️ Database Schema
 
 ### Customers

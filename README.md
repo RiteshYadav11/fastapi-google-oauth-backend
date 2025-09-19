@@ -3,21 +3,21 @@
 A comprehensive **FastAPI-based backend** for a food ordering platform with **Google OAuth authentication**, **database management**, and **analytical reporting** capabilities.  
 
 ## 📋 Table of Contents
-
-- [Project Overview](#project-overview)  
-- [Features](#features)  
-- [Tech Stack](#tech-stack)  
-- [Project Structure](#project-structure)  
-- [Prerequisites](#prerequisites)  
-- [Installation & Setup](#installation--setup)  
-- [Environment Variables](#environment-variables)  
-- [Running the Application](#running-the-application)  
-- [API Documentation](#api-documentation)  
-- [Database Schema](#database-schema)  
-- [Authentication Flow](#authentication-flow)  
-- [API Endpoints](#api-endpoints)  
-- [Docker Deployment](#docker-deployment)  
-- [Example API Calls](#example-api-calls)  
+ 
+- [Project Overview](#-project-overview)  
+- [Features](#-features)  
+- [Tech Stack](#-tech-stack)  
+- [Project Structure](#-project-structure)  
+- [Prerequisites](#-prerequisites)  
+- [Installation & Setup](#-installation--setup)  
+- [Environment Variables](#-environment-variables)  
+- [Running the Application](#-running-the-application)  
+- [API Documentation](#-api-documentation)  
+- [Database Schema](#-database-schema)  
+- [Authentication Flow](#-authentication-flow)  
+- [API Endpoints](#-api-endpoints)  
+- [Docker Deployment](#-docker-deployment)  
+- [Example API Calls](#-example-api-calls)  
 
 ---
 

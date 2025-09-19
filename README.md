@@ -104,7 +104,7 @@ fastapi-google-oauth-backend/
 
 ### 1️⃣ Clone the Repository
 ```bash
-git clone https://github.com/yourusername/fastapi-google-oauth-backend.git
+git clone https://github.com/RiteshYadav11/fastapi-google-oauth-backend.git
 cd fastapi-google-oauth-backend
 ````
 
